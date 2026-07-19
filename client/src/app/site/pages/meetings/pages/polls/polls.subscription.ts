@@ -81,9 +81,12 @@ export const getPollDetailSubscriptionConfig: SubscriptionConfigGenerator = (...
                 ]
             },
             {
+                // Rank (STV) polls store all ballots as votes on the global option,
+                // so the full vote data is needed for the single-votes table and the
+                // ballot exports.
                 idField: `global_option_id`,
                 fieldset: FULL_FIELDSET,
-                follow: [{ idField: `vote_ids`, fieldset: [] }]
+                follow: [{ idField: `vote_ids`, fieldset: FULL_FIELDSET }]
             },
             {
                 idField: `entitled_group_ids`,

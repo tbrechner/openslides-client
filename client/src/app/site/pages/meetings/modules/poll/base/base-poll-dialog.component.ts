@@ -141,7 +141,11 @@ export abstract class BasePollDialogComponent extends BaseUiComponent implements
     }
 
     private formatPayload(payload: any): void {
-        payload.pollmethod = (payload.pollmethod as FormPollMethod).toUpperCase();
+        // `rank` is the only pollmethod which is sent in lower case; `yna` (list) becomes `YNA`.
+        payload.pollmethod =
+            payload.pollmethod === FormPollMethod.RANK
+                ? PollMethod.Rank
+                : (payload.pollmethod as FormPollMethod).toUpperCase();
         if (this.isList) {
             payload.min_votes_amount = 1;
             payload.max_votes_amount = 1;

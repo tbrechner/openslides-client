@@ -69,7 +69,8 @@ export enum PollMethod {
     Y = `Y`,
     YN = `YN`,
     YNA = `YNA`,
-    N = `N`
+    N = `N`,
+    Rank = `rank`
 }
 
 export enum FormPollMethod {
@@ -77,7 +78,28 @@ export enum FormPollMethod {
     YN = `YN`,
     YNA = `YNA`,
     N = `N`,
-    LIST_YNA = `yna`
+    LIST_YNA = `yna`,
+    RANK = `rank`
+}
+
+/**
+ * The counting algorithms available for rank (`pollmethod: "rank"`) polls.
+ * A poll's `rank_algorithm` may be null, which means `MeekNz`.
+ */
+export enum PollRankAlgorithm {
+    MeekNz = `meek-nz`,
+    ScottishStv = `scottish-stv`,
+    Borda = `borda`
+}
+
+/**
+ * The quota rules available for the STV counting algorithms of rank polls.
+ * A poll's `rank_quota` may be null, which means `Droop`; the quota is
+ * ignored (and recorded as null) for the Borda count.
+ */
+export enum PollRankQuota {
+    Droop = `droop`,
+    Hare = `hare`
 }
 
 export enum PollPercentBase {
@@ -144,7 +166,9 @@ export const PollPropertyVerbose = {
     max_votes_amount: _(`Maximum amount of votes`),
     min_votes_amount: _(`Minimum amount of votes`),
     max_votes_per_option: _(`Maximum amount of votes per option`),
-    live_voting_enabled: _(`Live voting enabled`)
+    live_voting_enabled: _(`Live voting enabled`),
+    rank_algorithm: _(`Counting algorithm`),
+    rank_quota: _(`Quota`)
 };
 
 export type PollPropertyVerboseKey = keyof typeof PollPropertyVerbose;
@@ -167,7 +191,19 @@ export const PollMethodVerbose = {
     Y: ``,
     N: ``,
     YN: _(`Yes/No`),
-    YNA: _(`Yes/No/Abstain`)
+    YNA: _(`Yes/No/Abstain`),
+    rank: _(`Ranked choice`)
+};
+
+export const PollRankAlgorithmVerbose = {
+    [PollRankAlgorithm.MeekNz]: _(`Meek STV (New Zealand rules)`),
+    [PollRankAlgorithm.ScottishStv]: _(`Scottish STV`),
+    [PollRankAlgorithm.Borda]: _(`Borda count`)
+};
+
+export const PollRankQuotaVerbose = {
+    [PollRankQuota.Droop]: _(`Droop quota`),
+    [PollRankQuota.Hare]: _(`Hare quota`)
 };
 
 export const PollPercentBaseVerbose = {

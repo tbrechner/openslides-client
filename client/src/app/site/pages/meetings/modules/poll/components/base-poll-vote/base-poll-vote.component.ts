@@ -62,6 +62,10 @@ export abstract class BasePollVoteComponent<C extends PollContentObject = any> e
     public formControlMap: Record<number, UntypedFormControl> = {};
 
     public get minVotes(): number {
+        // Rank polls ignore min_votes_amount, but require at least one ranked candidate.
+        if (this.poll.isMethodRank) {
+            return 1;
+        }
         return this.poll.min_votes_amount;
     }
 
@@ -145,6 +149,11 @@ export abstract class BasePollVoteComponent<C extends PollContentObject = any> e
     protected deliveringVote: Record<number, boolean> = {};
 
     protected user!: ViewUser;
+
+    /**
+     * The current ranking per user (option ids, most preferred first) for rank polls.
+     */
+    private _rankingByUser: Record<number, Id[]> = {};
 
     private _isReady = false;
     private _poll!: ViewPoll<C>;
@@ -299,9 +308,42 @@ export abstract class BasePollVoteComponent<C extends PollContentObject = any> e
         return value === `Y` || value === `N` || value === `A`;
     }
 
+    /**
+     * Returns the current ranking (ordered option ids, most preferred first)
+     * of the given user for rank polls.
+     */
+    public getRanking(user: ViewUser = this.user): Id[] {
+        return this._rankingByUser[user?.id] || [];
+    }
+
+    /**
+     * Updates the ranking of the given user and mirrors it into the vote
+     * request data as `{ <option_id>: rank }` with ranks 1..k.
+     */
+    public setRanking(ranking: Id[], user: ViewUser = this.user): void {
+        if (!this.voteRequestData[user.id]) {
+            throw new Error(`The user for your voting request does not exist`);
+        }
+        this._rankingByUser[user.id] = ranking;
+        this.voteRequestData[user.id].value = this.buildRankValue(user);
+        this.cd.markForCheck();
+    }
+
+    /**
+     * Builds the ballot payload for rank polls: a mapping of option id to rank,
+     * where the ranks form the contiguous range 1..k.
+     */
+    protected buildRankValue(user: ViewUser = this.user): Record<number, number> {
+        const value: Record<number, number> = {};
+        this.getRanking(user).forEach((optionId, index) => {
+            value[optionId] = index + 1;
+        });
+        return value;
+    }
+
     public saveGlobalVote(globalVote: GlobalVote, user: ViewUser = this.user): void {
         if (this.voteRequestData[user.id].value && this.voteRequestData[user.id].value === globalVote) {
-            this.voteRequestData[user.id].value = {};
+            this.voteRequestData[user.id].value = this.poll?.isMethodRank ? this.buildRankValue(user) : {};
             if (this.poll.isMethodY && this.poll.max_votes_per_option > 1) {
                 this.enableInputs();
             }

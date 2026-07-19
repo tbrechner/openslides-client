@@ -1,0 +1,62 @@
+@use 'src/assets/styles/drag.scss';
+
+.rank-ballot-hint {
+    margin: 0 10px 10px;
+}
+
+.rank-ballot-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    margin: 0 10px;
+
+    @media (max-width: 700px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.rank-ballot-panel-title {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.rank-ballot-list {
+    min-height: 50px;
+}
+
+.rank-ballot-empty {
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75em;
+    opacity: 0.7;
+}
+
+.rank-ballot-line {
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    font-size: 14px;
+    margin-bottom: 5px;
+
+    .rank-ballot-drag-indicator {
+        padding: 0 0.5em;
+        line-height: 0px;
+        color: slategrey;
+        cursor: move;
+    }
+
+    .rank-ballot-count {
+        min-width: 1.5em;
+        text-align: right;
+    }
+
+    .rank-ballot-content {
+        flex: 1;
+        padding: 0 0.75em;
+    }
+}
+
+.cdk-drag-placeholder {
+    opacity: 1 !important;
+}

@@ -17,6 +17,10 @@ import {
     PollPercentBaseVerbose,
     PollPropertyVerbose,
     PollPropertyVerboseKey,
+    PollRankAlgorithm,
+    PollRankAlgorithmVerbose,
+    PollRankQuota,
+    PollRankQuotaVerbose,
     PollType,
     PollTypeVerbose
 } from 'src/app/domain/models/poll';
@@ -54,6 +58,8 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
     public PollType = PollType;
     public PollPropertyVerbose: Record<PollPropertyVerboseKey, string> = PollPropertyVerbose;
     public readonly pollBackendDurationChoices = PollBackendDurationChoices;
+    public readonly pollRankAlgorithms = PollRankAlgorithmVerbose;
+    public readonly pollRankQuotas = PollRankQuotaVerbose;
 
     /**
      * The different methods for this poll.
@@ -92,11 +98,36 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
     }
 
     public get filteredPollMethods(): Record<string, string> {
-        if (!this.isCreatedList || !this.pollMethods) {
+        if (!this.pollMethods) {
             return this.pollMethods;
         }
-        return Object.keys(this.pollMethods).reduce(
-            (obj, key) => (key === key.toUpperCase() ? { ...obj, [key]: this.pollMethods[key] } : obj),
+        let methods = this.pollMethods;
+        if (this.isCreatedList) {
+            methods = Object.keys(methods).reduce(
+                (obj, key) => (key === key.toUpperCase() ? { ...obj, [key]: methods[key] } : obj),
+                {}
+            );
+        }
+        if (!this.isEVotingSelected) {
+            // Ranked voting is only available for electronic voting
+            methods = Object.keys(methods).reduce(
+                (obj, key) => (key === FormPollMethod.RANK ? obj : { ...obj, [key]: methods[key] }),
+                {}
+            );
+        }
+        return methods;
+    }
+
+    /**
+     * The poll types which can be selected with the current poll method.
+     * Rank polls can never be analog.
+     */
+    public get filteredPollTypes(): Record<string, string> {
+        if (!this.isRankMethod) {
+            return this.pollTypes;
+        }
+        return Object.entries(this.pollTypes).reduce(
+            (obj, [key, value]) => (key === PollType.Analog ? obj : { ...obj, [key]: value }),
             {}
         );
     }
@@ -170,6 +201,22 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
 
     public get pollMethod(): FormPollMethod {
         return this.pollMethodControl.value as FormPollMethod;
+    }
+
+    public get isRankMethod(): boolean {
+        return this.pollMethod === FormPollMethod.RANK;
+    }
+
+    /**
+     * Whether the Borda count is selected as counting algorithm of a rank
+     * poll. Borda has no quota, so the quota select is hidden.
+     */
+    public get isBordaSelected(): boolean {
+        return this.isRankMethod && this.rankAlgorithmControl?.value === PollRankAlgorithm.Borda;
+    }
+
+    private get rankAlgorithmControl(): AbstractControl {
+        return this.contentForm.get(`rank_algorithm`);
     }
 
     private get globalYesControl(): AbstractControl {
@@ -364,6 +411,9 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
 
     public showMinMaxVotes(data: any): boolean {
         const selectedPollMethod: FormPollMethod = this.pollMethodControl.value;
+        if (selectedPollMethod === FormPollMethod.RANK) {
+            return false;
+        }
         return (
             (selectedPollMethod === FormPollMethod.Y ||
                 (selectedPollMethod !== FormPollMethod.LIST_YNA && this.allowToSetMinMax)) &&
@@ -384,6 +434,17 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
         const method = this.pollMethodControl.value.toUpperCase();
         const type = this.pollTypeControl.value;
         if (!method && !type) {
+            return;
+        }
+
+        if (this.pollMethodControl.value === FormPollMethod.RANK) {
+            // Rank polls must have the percent base "disabled".
+            this.percentBaseControl.setValue(PollPercentBase.Disabled, {
+                emitEvent: false
+            });
+            this.validPercentBases = {
+                [PollPercentBase.Disabled]: this.percentBases[PollPercentBase.Disabled]
+            };
             return;
         }
 
@@ -462,6 +523,11 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
          */
         const formData = { ...formGroup.getRawValue(), ...formGroup.value.votes_amount };
         delete formData.votes_amount;
+        if (formData.pollmethod !== FormPollMethod.RANK) {
+            // `rank_algorithm` and `rank_quota` may only be sent for rank polls.
+            delete formData.rank_algorithm;
+            delete formData.rank_quota;
+        }
         return formData;
     }
 
@@ -564,7 +630,9 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
             global_yes: [false],
             global_no: [false],
             global_abstain: [false],
-            live_voting_enabled: [false]
+            live_voting_enabled: [false],
+            rank_algorithm: [PollRankAlgorithm.MeekNz],
+            rank_quota: [PollRankQuota.Droop]
         });
     }
 
@@ -627,6 +695,12 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
         if (pollMethod) {
             if (this.isList) {
                 this.disableGlobalVoteControls();
+                return;
+            }
+            if ((pollMethod as string) === FormPollMethod.RANK) {
+                // Rank polls only allow an explicit abstain as global option
+                this.enableGlobalVoteControls();
+                this.disableGlobalVoteControls(`Yes`, `No`);
                 return;
             }
             this.enableGlobalVoteControls();

@@ -1,0 +1,90 @@
+<p class="rank-ballot-hint">
+    <i>{{ rankBallotHint | translate }}</i>
+</p>
+<div class="rank-ballot-panels">
+    <!-- Unranked candidates pool -->
+    <div class="rank-ballot-panel">
+        <b class="rank-ballot-panel-title">{{ candidatesLabel | translate }}</b>
+        <div
+            cdkDropList
+            cdkDropListSortingDisabled
+            class="rank-ballot-list"
+            id="rank-ballot-pool"
+            [cdkDropListConnectedTo]="['rank-ballot-ranking']"
+            [cdkDropListData]="'pool'"
+            [cdkDropListDisabled]="disabled"
+            (cdkDropListDropped)="dropIntoPool($event)"
+        >
+            @if (!unrankedOptions.length) {
+                <div class="rank-ballot-empty">
+                    <i>{{ emptyPoolLabel | translate }}</i>
+                </div>
+            }
+            @for (option of unrankedOptions; track option.id) {
+                <div cdkDrag class="rank-ballot-line backgroundColorLight" [cdkDragData]="option.id">
+                    <div cdkDragHandle class="rank-ballot-drag-indicator">
+                        <mat-icon>drag_indicator</mat-icon>
+                    </div>
+                    <div class="rank-ballot-content">
+                        <span>{{ getOptionLabel(option) }}</span>
+                        @if (getOptionSubtitle(option)) {
+                            <div class="user-subtitle">{{ getOptionSubtitle(option) }}</div>
+                        }
+                    </div>
+                    <button
+                        mat-icon-button
+                        type="button"
+                        [attr.aria-label]="'Add to ranking' | translate"
+                        [disabled]="disabled"
+                        (click)="addToRanking(option)"
+                    >
+                        <mat-icon>add_circle</mat-icon>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Ordered ranking -->
+    <div class="rank-ballot-panel">
+        <b class="rank-ballot-panel-title">{{ rankingLabel | translate }}</b>
+        <div
+            cdkDropList
+            class="rank-ballot-list"
+            id="rank-ballot-ranking"
+            [cdkDropListConnectedTo]="['rank-ballot-pool']"
+            [cdkDropListData]="'ranking'"
+            [cdkDropListDisabled]="disabled"
+            (cdkDropListDropped)="dropIntoRanking($event)"
+        >
+            @if (!rankedOptions.length) {
+                <div class="rank-ballot-empty">
+                    <i>{{ emptyRankingLabel | translate }}</i>
+                </div>
+            }
+            @for (option of rankedOptions; track option.id; let i = $index) {
+                <div cdkDrag class="rank-ballot-line backgroundColorLight" [cdkDragData]="option.id">
+                    <div cdkDragHandle class="rank-ballot-drag-indicator">
+                        <mat-icon>drag_indicator</mat-icon>
+                    </div>
+                    <div class="rank-ballot-count">{{ i + 1 }}.</div>
+                    <div class="rank-ballot-content">
+                        <span>{{ getOptionLabel(option) }}</span>
+                        @if (getOptionSubtitle(option)) {
+                            <div class="user-subtitle">{{ getOptionSubtitle(option) }}</div>
+                        }
+                    </div>
+                    <button
+                        mat-icon-button
+                        type="button"
+                        [attr.aria-label]="'Remove from ranking' | translate"
+                        [disabled]="disabled"
+                        (click)="removeFromRanking(option)"
+                    >
+                        <mat-icon>remove_circle</mat-icon>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

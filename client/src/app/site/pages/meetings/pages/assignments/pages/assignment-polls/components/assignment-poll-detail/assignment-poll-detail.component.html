@@ -126,6 +126,41 @@
         <span>{{ 'Export' | translate }}</span>
     </button>
 
+    <!-- Ballot exports for rank (STV) polls -->
+    <button
+        *osPerms="
+            permission.assignmentCanManagePolls;
+            and: poll && poll.isMethodRank && (poll.isFinished || poll.isPublished)
+        "
+        mat-menu-item
+        (click)="exportRankBallotsBlt()"
+    >
+        <mat-icon>file_download</mat-icon>
+        <span>{{ 'Export ballots (BLT)' | translate }}</span>
+    </button>
+    <button
+        *osPerms="
+            permission.assignmentCanManagePolls;
+            and: poll && poll.isMethodRank && (poll.isFinished || poll.isPublished)
+        "
+        mat-menu-item
+        (click)="exportRankBallotsCsv()"
+    >
+        <mat-icon>file_download</mat-icon>
+        <span>{{ 'Export ballots (CSV)' | translate }}</span>
+    </button>
+    <button
+        *osPerms="
+            permission.assignmentCanManagePolls;
+            and: poll && poll.isMethodRank && (poll.isFinished || poll.isPublished)
+        "
+        mat-menu-item
+        (click)="exportRankResultJson()"
+    >
+        <mat-icon>file_download</mat-icon>
+        <span>{{ 'Export result (JSON)' | translate }}</span>
+    </button>
+
     <button *osPerms="permission.assignmentCanManagePolls" mat-menu-item (click)="deletePoll()">
         <mat-icon color="warn">delete</mat-icon>
         <span>{{ 'Delete' | translate }}</span>

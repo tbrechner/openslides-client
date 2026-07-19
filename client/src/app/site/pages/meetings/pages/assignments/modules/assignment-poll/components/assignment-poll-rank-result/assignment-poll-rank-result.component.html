@@ -1,0 +1,142 @@
+@if (result) {
+    @if (isError) {
+        <div class="rank-result-error">
+            <mat-icon color="warn">error</mat-icon>
+            <span>{{ 'Counting the ranked ballots failed' | translate }}: {{ errorMessage }}</span>
+        </div>
+    } @else {
+        <div class="rank-result">
+            <!-- Elected candidates in order of election -->
+            <h3>{{ 'Elected' | translate }}</h3>
+            @if (electedNames.length) {
+                <ol class="rank-elected-list">
+                    @for (name of electedNames; track $index) {
+                        <li>
+                            <span class="candidate-name">{{ name }}</span>
+                            <mat-icon class="elected-icon yes" inline>check_circle</mat-icon>
+                        </li>
+                    }
+                </ol>
+            } @else {
+                <div>
+                    <i>{{ 'No candidates were elected.' | translate }}</i>
+                </div>
+            }
+
+            <!-- Summary -->
+            <div class="rank-summary user-subtitle">
+                <span>{{ 'Seats' | translate }}: {{ result.seats }}</span>
+                @if (!isBorda) {
+                    <span>{{ 'Quota rule' | translate }}: {{ quotaRuleVerbose | translate }}</span>
+                    <span>{{ 'Final quota' | translate }}: {{ formatDecimal(result.quota_final) }}</span>
+                }
+                <span>{{ 'Ballots' | translate }}: {{ result.ballot_count }}</span>
+                <span>{{ 'Abstain' | translate }}: {{ formatDecimal(result.abstain_weight) }}</span>
+                @if (!isBorda) {
+                    <span>{{ 'Exhausted votes' | translate }}: {{ formatDecimal(result.exhausted_final) }}</span>
+                }
+                <span>{{ 'Algorithm' | translate }}: {{ algorithmVerbose | translate }}</span>
+                <span>{{ 'Tie-break seed' | translate }}: {{ result.seed }}</span>
+            </div>
+
+            @if (isBorda) {
+                <!-- Borda: a single points table, no quota/exhausted/rounds concepts -->
+                @if (bordaRows.length) {
+                    <h4>{{ 'Count details' | translate }}</h4>
+                    <div class="rank-rounds-scroll">
+                        <table class="rank-rounds-table">
+                            <thead>
+                                <tr>
+                                    <th class="candidate-col">{{ 'Candidate' | translate }}</th>
+                                    <th>{{ 'Points' | translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (row of bordaRows; track row.id) {
+                                    <tr>
+                                        <td class="candidate-col">
+                                            {{ row.name }}
+                                            @if (row.electionOrder !== null) {
+                                                <mat-icon class="elected-icon yes" inline>check_circle</mat-icon>
+                                            }
+                                        </td>
+                                        <td [class.elected]="row.electionOrder !== null">
+                                            {{ formatDecimal(row.points) }}
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @for (note of tieBreakNotes; track $index) {
+                        <div class="tie-break-note user-subtitle">{{ note }}</div>
+                    }
+                }
+            } @else {
+                <!-- Meek: round-by-round table; Scottish STV: stage-by-stage table -->
+                @if (rounds.length) {
+                    <h4>{{ 'Count details' | translate }}</h4>
+                    <div class="rank-rounds-scroll">
+                        <table class="rank-rounds-table">
+                            <thead>
+                                <tr>
+                                    <th class="candidate-col">{{ 'Candidate' | translate }}</th>
+                                    @for (round of rounds; track round.number) {
+                                        <th>{{ roundLabel | translate }} {{ round.number }}</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (row of candidateRows; track row.id) {
+                                    <tr>
+                                        <td class="candidate-col" [class.excluded]="row.excludedInRound !== null">
+                                            {{ row.name }}
+                                            @if (row.electionOrder !== null) {
+                                                <mat-icon class="elected-icon yes" inline>check_circle</mat-icon>
+                                            }
+                                        </td>
+                                        @for (round of rounds; track round.number) {
+                                            <td
+                                                [class.elected]="isElectedByRound(row, round)"
+                                                [class.excluded]="isExcludedByRound(row, round)"
+                                            >
+                                                <span class="vote-value">
+                                                    {{ getVotes(row, round) ?? '–' }}
+                                                    @if (isElectedInRound(row, round)) {
+                                                        <mat-icon class="elected-icon yes" inline>check</mat-icon>
+                                                    }
+                                                </span>
+                                                @if (showKeepFactors) {
+                                                    @if (getKeepFactor(row, round); as keepFactor) {
+                                                        <div class="keep-factor user-subtitle">
+                                                            {{ 'Keep factor' | translate }}: {{ keepFactor }}
+                                                        </div>
+                                                    }
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                                <tr class="meta-row">
+                                    <td class="candidate-col">{{ 'Exhausted votes' | translate }}</td>
+                                    @for (round of rounds; track round.number) {
+                                        <td>{{ formatDecimal(round.exhausted) }}</td>
+                                    }
+                                </tr>
+                                <tr class="meta-row">
+                                    <td class="candidate-col">{{ 'Quota' | translate }}</td>
+                                    @for (round of rounds; track round.number) {
+                                        <td>{{ formatDecimal(round.quota) }}</td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @for (note of tieBreakNotes; track $index) {
+                        <div class="tie-break-note user-subtitle">{{ note }}</div>
+                    }
+                }
+            }
+        </div>
+    }
+}

@@ -72,7 +72,7 @@
                             </div>
                         }
                         <!-- Options and Actions -->
-                        @if (!(settings.isSplitSingleOption && !displayed_in_autopilot)) {
+                        @if (!poll.isMethodRank && !(settings.isSplitSingleOption && !displayed_in_autopilot)) {
                             <div
                                 role="row"
                                 [ngClass]="{
@@ -185,7 +185,17 @@
                             }
                         }
 
-                        @for (option of poll.options; track option.id; let i = $index) {
+                        <!-- Ranking ballot (pollmethod "rank") -->
+                        @if (poll.isMethodRank) {
+                            <os-poll-rank-ballot
+                                [candidates]="poll.options"
+                                [disabled]="isDeliveringVote(delegation)"
+                                [ranking]="getRanking(delegation)"
+                                (rankingChange)="setRanking($event, delegation)"
+                            />
+                        }
+
+                        @for (option of poll.isMethodRank ? [] : poll.options; track option.id; let i = $index) {
                             <div
                                 [attr.role]="poll.max_votes_per_option > 1 ? 'row' : 'row radiogroup'"
                                 [ngClass]="{
@@ -306,9 +316,10 @@
                             </div>
                         }
                         @if (
-                            (poll.isMethodY || poll.isMethodN || poll.isMethodYN) &&
+                            (poll.isMethodY || poll.isMethodN || poll.isMethodYN || poll.isMethodRank) &&
                             poll.hasGlobalOptionEnabled &&
-                            (!poll.isMethodN || poll.global_no || poll.global_abstain)
+                            (!poll.isMethodN || poll.global_no || poll.global_abstain) &&
+                            (!poll.isMethodRank || poll.global_abstain)
                         ) {
                             @if (!settings.hideLeftoverVotes) {
                                 <div class="or-divider-grid" role="row">
@@ -325,7 +336,10 @@
                             <!-- global yes/no/abstain -->
                             @if (!settings.hideGlobalOptions) {
                                 @for (option of globalVoteActions; track option.vote) {
-                                    @if (!poll.isMethodN || option.vote !== 'Y') {
+                                    @if (
+                                        (!poll.isMethodN || option.vote !== 'Y') &&
+                                        (!poll.isMethodRank || option.vote === 'A')
+                                    ) {
                                         <div class="single-vote-grid" role="row">
                                             <div class="vote-option-title" role="rowheader">
                                                 <span>

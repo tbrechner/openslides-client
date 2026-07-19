@@ -81,7 +81,7 @@ export class AssignmentPollDetailContentComponent implements OnInit, AfterViewIn
     }
 
     public get showYHeader(): boolean {
-        return this.isMethodY || this.isMethodYN || this.isMethodYNA;
+        return this.isMethodY || this.isMethodYN || this.isMethodYNA || this.isMethodRank;
     }
 
     public get showNHeader(): boolean {
@@ -104,8 +104,31 @@ export class AssignmentPollDetailContentComponent implements OnInit, AfterViewIn
         return this.method === PollMethod.YNA;
     }
 
+    public get isMethodRank(): boolean {
+        return this.method === PollMethod.Rank;
+    }
+
+    /**
+     * Whether the STV result block should be rendered. This is the case for
+     * rank polls as soon as the backend has written a `rank_result` (also for
+     * its error variant, which renders as an error message).
+     */
+    public get showRankResult(): boolean {
+        return this.isMethodRank && !!this.poll?.rank_result;
+    }
+
+    /**
+     * For rank polls with a successfully counted result the generic table
+     * (which would only show first-preference totals) is replaced by the STV
+     * result block. If counting failed, the first-preference totals are shown
+     * below the error message.
+     */
+    public get suppressGenericResults(): boolean {
+        return this.isMethodRank && !!this.poll?.rank_result && !this.poll.rank_result.error;
+    }
+
     public get classOptionAmount(): string {
-        if (this.isMethodY || this.isMethodN) {
+        if (this.isMethodY || this.isMethodN || this.isMethodRank) {
             return `row-1`;
         } else if (this.isMethodYN) {
             return `row-2`;
@@ -263,7 +286,7 @@ export class AssignmentPollDetailContentComponent implements OnInit, AfterViewIn
         if (!result.vote) {
             return true;
         }
-        if (this.isMethodY) {
+        if (this.isMethodY || this.isMethodRank) {
             return result.vote === `yes`;
         } else if (this.isMethodN) {
             return result.vote === `no`;

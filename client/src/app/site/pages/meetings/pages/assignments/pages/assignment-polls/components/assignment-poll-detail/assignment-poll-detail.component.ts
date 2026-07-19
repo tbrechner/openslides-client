@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Id } from 'src/app/domain/definitions/key-types';
 import { Permission } from 'src/app/domain/definitions/permission';
-import { VoteValue } from 'src/app/domain/models/poll';
+import { parseRankVoteValue, VoteValue } from 'src/app/domain/models/poll';
 import {
     BasePollDetailComponent,
     BaseVoteData
@@ -16,6 +17,7 @@ import {
 } from '../../../../modules/assignment-poll/services/assignment-poll.service';
 import { AssignmentPollDialogService } from '../../../../modules/assignment-poll/services/assignment-poll-dialog.service';
 import { AssignmentPollPdfService } from '../../../../modules/assignment-poll/services/assignment-poll-pdf.service/assignment-poll-pdf.service';
+import { AssignmentPollRankExportService } from '../../../../modules/assignment-poll/services/assignment-poll-rank-export.service/assignment-poll-rank-export.service';
 
 @Component({
     selector: `os-assignment-poll-detail`,
@@ -50,7 +52,8 @@ export class AssignmentPollDetailComponent
     public constructor(
         pollService: AssignmentPollService,
         private pollDialog: AssignmentPollDialogService,
-        pollPdfService: AssignmentPollPdfService
+        pollPdfService: AssignmentPollPdfService,
+        private rankExportService: AssignmentPollRankExportService
     ) {
         super(pollService, pollPdfService);
         this.subscriptions.push(this.voteWeightEnabled.subscribe(data => (this.displayVoteWeight = data)));
@@ -59,6 +62,18 @@ export class AssignmentPollDetailComponent
 
     public openDialog(poll: ViewPoll): void {
         this.pollDialog.open(poll);
+    }
+
+    public exportRankBallotsBlt(): void {
+        this.rankExportService.exportBlt(this.poll);
+    }
+
+    public exportRankBallotsCsv(): void {
+        this.rankExportService.exportCsv(this.poll);
+    }
+
+    public exportRankResultJson(): void {
+        this.rankExportService.exportJson(this.poll);
     }
 
     public override getUsersVoteDelegation(user: ViewUser): ViewUser {
@@ -101,14 +116,36 @@ export class AssignmentPollDetailComponent
         }
         for (const vote of this.poll.global_option?.votes ?? []) {
             if (vote.weight > 0) {
+                // Rank polls store the whole ballot as a JSON string on the global option.
+                const ranking = this.poll.isMethodRank ? parseRankVoteValue(vote.value) : null;
                 // global vote must be the only vote, so we can just ignore any previous value
                 votes[vote.user_token] = {
                     user: vote.user,
-                    votes: [`${this.translate.instant(`General`)}: ${this.voteValueToLabel(vote.value)}`]
+                    votes: [
+                        ranking
+                            ? this.rankingToLabel(ranking)
+                            : `${this.translate.instant(`General`)}: ${this.voteValueToLabel(vote.value)}`
+                    ]
                 };
             }
         }
         return Object.values(votes);
+    }
+
+    /**
+     * Renders a ranked ballot (ordered option ids) as e.g. "1. Carol · 2. Dave · 3. Alice".
+     */
+    private rankingToLabel(ranking: Id[]): string {
+        const optionsById = new Map<Id, ViewOption<ViewAssignment>>(
+            this.poll.options.map(option => [option.id, option])
+        );
+        return ranking
+            .map((optionId, index) => {
+                const option = optionsById.get(optionId);
+                const name = option ? option.getOptionTitle().title : this.translate.instant(UnknownUserLabel);
+                return `${index + 1}. ${name}`;
+            })
+            .join(` · `);
     }
 
     protected override onAfterSetVotesData(): void {

@@ -33,6 +33,7 @@ import { AssignmentPollDetailContentComponent } from './components/assignment-po
 import { AssignmentPollDialogComponent } from './components/assignment-poll-dialog/assignment-poll-dialog.component';
 import { AssignmentPollFormComponent } from './components/assignment-poll-form/assignment-poll-form.component';
 import { AssignmentPollMetaInfoComponent } from './components/assignment-poll-meta-info/assignment-poll-meta-info.component';
+import { AssignmentPollRankResultComponent } from './components/assignment-poll-rank-result/assignment-poll-rank-result.component';
 import { AssignmentPollVoteComponent } from './components/assignment-poll-vote/assignment-poll-vote.component';
 import { AssignmentPollService } from './services/assignment-poll.service';
 import { AssignmentPollServiceModule } from './services/assignment-poll-service.module';
@@ -41,6 +42,7 @@ const COMPONENTS = [
     AssignmentPollComponent,
     AssignmentPollDetailContentComponent,
     AssignmentPollMetaInfoComponent,
+    AssignmentPollRankResultComponent,
     AssignmentPollVoteComponent // TODO: Only exported to have access to it in the autopilot
 ];
 

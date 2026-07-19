@@ -1,0 +1,83 @@
+@use 'src/assets/styles/poll-styles-common.scss';
+
+.rank-result-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1em 0;
+}
+
+.rank-result {
+    margin-bottom: 2em;
+
+    .rank-elected-list {
+        margin: 0.5em 0;
+        padding-left: 1.5em;
+
+        .candidate-name {
+            font-weight: 500;
+        }
+    }
+
+    .elected-icon {
+        vertical-align: text-bottom;
+        margin-left: 2px;
+    }
+
+    .rank-summary {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 1.5em;
+        row-gap: 0.25em;
+        margin: 0.5em 0 1em 0;
+    }
+
+    .rank-rounds-scroll {
+        overflow-x: auto;
+    }
+
+    .rank-rounds-table {
+        border-collapse: collapse;
+        min-width: 100%;
+
+        th,
+        td {
+            padding: 4px 12px;
+            text-align: end;
+            white-space: nowrap;
+            vertical-align: top;
+        }
+
+        th.candidate-col,
+        td.candidate-col {
+            text-align: start;
+        }
+
+        thead th {
+            border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+        }
+
+        td.elected .vote-value {
+            font-weight: 700;
+        }
+
+        td.excluded .vote-value,
+        td.candidate-col.excluded {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .keep-factor {
+            font-size: 80%;
+        }
+
+        .meta-row td {
+            border-top: 1px solid rgba(128, 128, 128, 0.4);
+            font-style: italic;
+        }
+    }
+
+    .tie-break-note {
+        margin-top: 0.5em;
+    }
+}

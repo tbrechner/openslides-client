@@ -85,6 +85,7 @@ export class AssignmentPollPdfService extends BasePollPdfService {
                         this.getTitle(data.title),
                         this.getSubtitle(data.subtitle),
                         this.createPollHint(data.poll),
+                        ...(data.poll.pollmethod === PollMethod.Rank ? [this.createRankHint()] : []),
                         this.createOptionFields(data.poll)
                     ],
                     margin: [0, 0, 0, 0]
@@ -103,6 +104,9 @@ export class AssignmentPollPdfService extends BasePollPdfService {
                 optionName = opt.content_object?.full_name;
             }
             if (optionName) {
+                if (poll.pollmethod === PollMethod.Rank) {
+                    return this.createRankBallotEntry(optionName);
+                }
                 return poll.pollmethod === PollMethod.Y
                     ? this.createBallotOption(optionName)
                     : this.createYNBallotEntry(optionName, poll.pollmethod);
@@ -110,6 +114,12 @@ export class AssignmentPollPdfService extends BasePollPdfService {
                 throw new Error(this.translate.instant(`This ballot contains deleted users.`));
             }
         });
+
+        if (poll.pollmethod === PollMethod.Rank && poll.global_abstain) {
+            const abstainEntry = this.createBallotOption(this.translate.instant(`Abstain`));
+            abstainEntry.margin[1] = 25;
+            resultObject.push(abstainEntry);
+        }
 
         if (poll.pollmethod === PollMethod.Y) {
             if (poll.global_yes) {
@@ -131,6 +141,50 @@ export class AssignmentPollPdfService extends BasePollPdfService {
             }
         }
         return resultObject;
+    }
+
+    /**
+     * Creates one entry of a ranked-choice ballot: an empty box to write the
+     * rank number into, followed by the candidate's name.
+     */
+    private createRankBallotEntry(option: string): { margin: number[]; columns: object[] } {
+        const boxSize = 14;
+        return {
+            margin: [21, 10, 0, 0],
+            columns: [
+                {
+                    width: boxSize + 7,
+                    canvas: [
+                        {
+                            type: `rect`,
+                            x: 0,
+                            y: 0,
+                            w: boxSize,
+                            h: boxSize,
+                            lineColor: `black`
+                        }
+                    ]
+                },
+                {
+                    width: `auto`,
+                    text: option,
+                    margin: [0, 2, 0, 0]
+                }
+            ]
+        };
+    }
+
+    /**
+     * The filling instruction printed on ranked-choice (STV) ballots.
+     */
+    private createRankHint(): object {
+        return {
+            text: this.translate.instant(
+                `Rank the candidates in order of preference: 1 for your first choice, 2 for your second choice, and so on. You do not have to rank all candidates.`
+            ),
+            style: `description`,
+            margin: [20, 5, 10, 0]
+        };
     }
 
     private createYNBallotEntry(option: string, method: PollMethod): object {

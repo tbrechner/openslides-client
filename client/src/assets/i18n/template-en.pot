@@ -232,6 +232,10 @@ msgstr ""
 msgid "Add to queue"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.html
+msgid "Add to ranking"
+msgstr ""
+
 msgid "Add up"
 msgstr ""
 
@@ -286,10 +290,18 @@ msgstr ""
 msgid "Agenda visibility"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Algorithm"
+msgstr ""
+
 msgid "Align"
 msgstr ""
 
 msgid "All"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.ts
+msgid "All candidates are ranked."
 msgstr ""
 
 msgid "All casted ballots"
@@ -411,10 +423,6 @@ msgid "Amount of votes"
 msgstr ""
 
 msgid "An error occurred while voting."
-msgstr ""
-
-#: app/src/app/site/pages/meetings/pages/agenda/services/agenda-pdf-catalog-export.service/agenda-pdf-catalog-export.service.ts
-msgid "An undefined class was called. Please add the class: {}"
 msgstr ""
 
 msgid "An unknown error occurred."
@@ -825,6 +833,10 @@ msgid "Blockquote"
 msgstr ""
 
 msgid "Bold"
+msgstr ""
+
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Borda count"
 msgstr ""
 
 msgid "Bullet list"
@@ -1553,6 +1565,10 @@ msgstr ""
 msgid "Count completed requests to speak"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Count details"
+msgstr ""
+
 msgid "Count logged-in users"
 msgstr ""
 
@@ -1565,7 +1581,15 @@ msgstr ""
 msgid "Counter speech"
 msgstr ""
 
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Counting algorithm"
+msgstr ""
+
 msgid "Counting of votes is in progress ..."
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Counting the ranked ballots failed"
 msgstr ""
 
 msgid "Couple countdown with the list of speakers"
@@ -1867,6 +1891,14 @@ msgstr ""
 msgid "Downloading attachments"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.ts
+msgid "Drag candidates into your preferred order. You do not need to rank everyone."
+msgstr ""
+
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Droop quota"
+msgstr ""
+
 msgid "Drop files into this area OR click here to select files"
 msgstr ""
 
@@ -1962,6 +1994,10 @@ msgid "Edit workflow"
 msgstr ""
 
 msgid "Editorial final version"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Elected"
 msgstr ""
 
 msgid "Election"
@@ -2176,6 +2212,11 @@ msgid ""
 "list of speakers only)"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Exhausted votes"
+msgstr ""
+
 msgid ""
 "Existing accounts can be reused or updated by using: <ul><li>Membership "
 "number <i>(recommended)</i><li>Username<li>Email address AND first name AND "
@@ -2200,6 +2241,14 @@ msgstr ""
 msgid "Export as PDF"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/pages/assignment-polls/components/assignment-poll-detail/assignment-poll-detail.component.html
+msgid "Export ballots (BLT)"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/pages/assignment-polls/components/assignment-poll-detail/assignment-poll-detail.component.html
+msgid "Export ballots (CSV)"
+msgstr ""
+
 msgid "Export comment"
 msgstr ""
 
@@ -2207,6 +2256,10 @@ msgid "Export moderator note as PDF"
 msgstr ""
 
 msgid "Export personal note only"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/pages/assignment-polls/components/assignment-poll-detail/assignment-poll-detail.component.html
+msgid "Export result (JSON)"
 msgstr ""
 
 msgid "Export selected elections"
@@ -2251,10 +2304,18 @@ msgstr ""
 msgid "Filtered single votes"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Final quota"
+msgstr ""
+
 msgid "Final version"
 msgstr ""
 
 msgid "Finished"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-detail-content/assignment-poll-detail-content.component.html
+msgid "First preferences"
 msgstr ""
 
 msgid "First speech"
@@ -2395,6 +2456,10 @@ msgstr ""
 msgid "Global headbar color"
 msgstr ""
 
+#: client/src/app/site/modules/global-headbar/components/global-headbar/global-headbar.component.html
+msgid "Global search"
+msgstr ""
+
 msgid "Go to line"
 msgstr ""
 
@@ -2426,6 +2491,10 @@ msgid "Groups with read permissions"
 msgstr ""
 
 msgid "Groups with write permissions"
+msgstr ""
+
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Hare quota"
 msgstr ""
 
 msgid "Has SSO identification"
@@ -2806,6 +2875,10 @@ msgstr ""
 msgid "Is not in archived meetings"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/participants/pages/participant-list/services/participant-list-filter/participant-list-filter.service.ts
+msgid "Is not locked out"
+msgstr ""
+
 msgid "Is not present"
 msgstr ""
 
@@ -2875,6 +2948,10 @@ msgid "Justify"
 msgstr ""
 
 msgid "Keep each item in a single line."
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Keep factor"
 msgstr ""
 
 msgid "Label color"
@@ -3063,6 +3140,10 @@ msgid "Media access is denied"
 msgstr ""
 
 msgid "Media file"
+msgstr ""
+
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Meek STV (New Zealand rules)"
 msgstr ""
 
 msgid "Meeting"
@@ -3424,6 +3505,14 @@ msgid "No"
 msgstr ""
 
 msgid "No admin role"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.ts
+msgid "No candidates ranked yet."
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "No candidates were elected."
 msgstr ""
 
 msgid "No category"
@@ -4034,6 +4123,10 @@ msgstr ""
 msgid "Point of order"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Points"
+msgstr ""
+
 msgid "Polls"
 msgstr ""
 
@@ -4177,7 +4270,25 @@ msgstr ""
 msgid "Queue"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Quota"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Quota rule"
+msgstr ""
+
 msgid "Rank"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/services/assignment-poll-pdf.service/assignment-poll-pdf.service.ts
+msgid ""
+"Rank the candidates in order of preference: 1 for your first choice, 2 for "
+"your second choice, and so on. You do not have to rank all candidates."
+msgstr ""
+
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Ranked choice"
 msgstr ""
 
 msgid "Re-add last speaker"
@@ -4190,6 +4301,10 @@ msgid "Reason"
 msgstr ""
 
 msgid "Reason required for creating new motion"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/motions/pages/motion-detail/pages/motion-view/components/motion-content/motion-content.component.html
+msgid "Reason text"
 msgstr ""
 
 msgid "Receipt of contributions"
@@ -4278,6 +4393,10 @@ msgid "Remove from agenda"
 msgstr ""
 
 msgid "Remove from motion block"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.html
+msgid "Remove from ranking"
 msgstr ""
 
 msgid "Remove link"
@@ -4399,6 +4518,10 @@ msgstr ""
 msgid "Roman"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "Round"
+msgstr ""
+
 msgid "Rows with warnings"
 msgstr ""
 
@@ -4429,6 +4552,10 @@ msgstr ""
 msgid "Scan this QR code to open URL."
 msgstr ""
 
+#: client/src/app/domain/models/poll/poll-constants.ts
+msgid "Scottish STV"
+msgstr ""
+
 msgid "Scroll down"
 msgstr ""
 
@@ -4448,6 +4575,10 @@ msgid "Search player"
 msgstr ""
 
 msgid "Searching for players ..."
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Seats"
 msgstr ""
 
 msgid "Select"
@@ -4801,6 +4932,10 @@ msgid "Spokesperson"
 msgstr ""
 
 msgid "Spokespersons"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "Stage"
 msgstr ""
 
 msgid "Stalemate! It's a draw!"
@@ -5246,6 +5381,14 @@ msgid "This will set the workflow for all selected motions:"
 msgstr ""
 
 msgid "Threefold repetition! It's a draw!"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "Tie between"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.html
+msgid "Tie-break seed"
 msgstr ""
 
 msgid "Tile view"
@@ -5792,6 +5935,10 @@ msgstr ""
 msgid "You reached the maximum amount of votes. Deselect somebody first."
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/participants/pages/participant-list/components/participant-list/participant-list.component.ts
+msgid "You were not removed from the meeting."
+msgstr ""
+
 msgid ""
 "You will be logged out when you change your password. You must then log in "
 "with the new password."
@@ -5844,6 +5991,10 @@ msgstr ""
 msgid "Your password has been reset successfully!"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/modules/poll/components/poll-rank-ballot/poll-rank-ballot.component.ts
+msgid "Your ranking"
+msgstr ""
+
 #: app/src/app/gateways/http.service.ts
 msgid ""
 "Your vote was rejected because your IP address is not in the allowed IP "
@@ -5890,6 +6041,10 @@ msgstr ""
 msgid "amendment"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/motions/pages/motion-detail/pages/motion-view/components/motion-content/motion-content.component.html
+msgid "amendment text"
+msgstr ""
+
 msgid "amendments"
 msgstr ""
 
@@ -5906,6 +6061,10 @@ msgid "are required"
 msgstr ""
 
 msgid "ballot-paper"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "broken randomly"
 msgstr ""
 
 msgid "by"
@@ -5965,6 +6124,10 @@ msgstr ""
 msgid "e.g. for online meetings"
 msgstr ""
 
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "elected"
+msgstr ""
+
 msgid "emails"
 msgstr ""
 
@@ -5972,6 +6135,10 @@ msgid "ended"
 msgstr ""
 
 msgid "example"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/assignments/modules/assignment-poll/components/assignment-poll-rank-result/assignment-poll-rank-result.component.ts
+msgid "excluded"
 msgstr ""
 
 msgid "external"
@@ -6072,6 +6239,12 @@ msgid "max. 32 characters allowed"
 msgstr ""
 
 msgid "modified"
+msgstr ""
+
+#: client/src/app/site/pages/meetings/pages/motions/pages/motion-detail/pages/motion-view/components/motion-content/motion-content.component.html
+#: client/src/app/site/pages/meetings/pages/motions/pages/motion-detail/pages/motion-view/components/motion-content/motion-content.component.html
+#: client/src/app/site/pages/meetings/pages/motions/pages/motion-detail/pages/motion-view/components/motion-content/motion-content.component.html
+msgid "motion text"
 msgstr ""
 
 msgid "motions"

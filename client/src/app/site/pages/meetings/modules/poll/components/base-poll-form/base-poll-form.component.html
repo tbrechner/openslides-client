@@ -17,7 +17,7 @@
                     <mat-form-field>
                         <mat-label>{{ PollPropertyVerbose.type | translate }}</mat-label>
                         <mat-select formControlName="type" required>
-                            @for (option of pollTypes | keyvalue; track option) {
+                            @for (option of filteredPollTypes | keyvalue; track option) {
                                 <mat-option [value]="option.key">
                                     {{ option.value | translate }}
                                 </mat-option>
@@ -70,7 +70,32 @@
                         <mat-error>{{ 'This field is required.' | translate }}</mat-error>
                     </mat-form-field>
                 }
-                @if (isEVotingSelected) {
+                <!-- Counting algorithm and quota for ranked choice polls -->
+                @if (isRankMethod) {
+                    <mat-form-field class="second">
+                        <mat-label>{{ PollPropertyVerbose.rank_algorithm | translate }}</mat-label>
+                        <mat-select formControlName="rank_algorithm">
+                            @for (option of pollRankAlgorithms | keyvalue: keepEntryOrder; track option) {
+                                <mat-option [value]="option.key">
+                                    {{ option.value | translate }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    @if (!isBordaSelected) {
+                        <mat-form-field class="third">
+                            <mat-label>{{ PollPropertyVerbose.rank_quota | translate }}</mat-label>
+                            <mat-select formControlName="rank_quota">
+                                @for (option of pollRankQuotas | keyvalue: keepEntryOrder; track option) {
+                                    <mat-option [value]="option.key">
+                                        {{ option.value | translate }}
+                                    </mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    }
+                }
+                @if (isEVotingSelected && !isRankMethod) {
                     <ng-container formGroupName="votes_amount">
                         <!-- Min Amount of Votes -->
                         @if (showMinMaxVotes(data)) {
@@ -137,12 +162,14 @@
             <!-- Amount of Votes and global options -->
             @if (!hideSelects.globalOptions) {
                 <div class="global-options">
-                    <mat-checkbox formControlName="global_yes">
-                        {{ PollPropertyVerbose.global_yes | translate }}
-                    </mat-checkbox>
-                    <mat-checkbox formControlName="global_no">
-                        {{ PollPropertyVerbose.global_no | translate }}
-                    </mat-checkbox>
+                    @if (!isRankMethod) {
+                        <mat-checkbox formControlName="global_yes">
+                            {{ PollPropertyVerbose.global_yes | translate }}
+                        </mat-checkbox>
+                        <mat-checkbox formControlName="global_no">
+                            {{ PollPropertyVerbose.global_no | translate }}
+                        </mat-checkbox>
+                    }
                     <mat-checkbox formControlName="global_abstain">
                         {{ PollPropertyVerbose.global_abstain | translate }}
                     </mat-checkbox>
@@ -153,7 +180,7 @@
         <div class="info-grid">
             <!-- 100 Percent Base -->
             <div>
-                @if (!hideSelects.hundredPercentBase) {
+                @if (!hideSelects.hundredPercentBase && !isRankMethod) {
                     <mat-form-field>
                         <mat-label>{{ PollPropertyVerbose.onehundred_percent_base | translate }}</mat-label>
                         <mat-select formControlName="onehundred_percent_base" panelClass="percent-base-panel" required>

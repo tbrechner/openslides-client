@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Decimal } from 'src/app/domain/definitions/key-types';
 import { Poll } from 'src/app/domain/models/poll/poll';
-import { PollState, PollType } from 'src/app/domain/models/poll/poll-constants';
+import { PollMethod, PollState, PollType } from 'src/app/domain/models/poll/poll-constants';
 import { toDecimal } from 'src/app/infrastructure/utils';
 import { VoteControllerService } from 'src/app/site/pages/meetings/modules/poll/services/vote-controller.service';
 import { ViewPoll } from 'src/app/site/pages/meetings/pages/polls';
@@ -127,11 +127,19 @@ export class PollRepositoryService extends BaseMeetingRelatedRepository<ViewPoll
             content_object_id: poll.content_object_id,
             entitled_group_ids: poll.entitled_group_ids,
             backend: poll.backend,
-            live_voting_enabled: poll.live_voting_enabled
+            live_voting_enabled: poll.live_voting_enabled,
+            rank_algorithm: poll.rank_algorithm,
+            rank_quota: poll.rank_quota
         };
 
         if (poll.type !== PollType.Named) {
             delete payload.live_voting_enabled;
+        }
+
+        if (poll.pollmethod !== PollMethod.Rank) {
+            // `rank_algorithm` and `rank_quota` may only be set for rank polls.
+            delete payload.rank_algorithm;
+            delete payload.rank_quota;
         }
 
         return this.sendActionToBackend(PollAction.CREATE, payload);
@@ -223,8 +231,17 @@ export class PollRepositoryService extends BaseMeetingRelatedRepository<ViewPoll
             global_abstain: update.global_abstain,
             global_no: update.global_no,
             global_yes: update.global_yes,
-            live_voting_enabled: update.live_voting_enabled
+            live_voting_enabled: update.live_voting_enabled,
+            rank_algorithm: update.rank_algorithm,
+            rank_quota: update.rank_quota
         };
+
+        if (update.pollmethod !== PollMethod.Rank) {
+            // `rank_algorithm` and `rank_quota` may only be set for rank polls.
+            delete payload.rank_algorithm;
+            delete payload.rank_quota;
+        }
+
         return this.sendActionToBackend(PollAction.UPDATE, payload);
     }
 

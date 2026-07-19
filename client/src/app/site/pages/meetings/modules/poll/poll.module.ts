@@ -23,6 +23,7 @@ import { EntitledUsersTableComponent } from './components/entitled-users-table/e
 import { PollCannotVoteMessageComponent } from './components/poll-cannot-vote-message/poll-cannot-vote-message.component';
 import { PollFilteredVotesChartComponent } from './components/poll-filtered-votes-chart/poll-filtered-votes-chart.component';
 import { PollProgressComponent } from './components/poll-progress/poll-progress.component';
+import { PollRankBallotComponent } from './components/poll-rank-ballot/poll-rank-ballot.component';
 import { SingleOptionChartTableComponent } from './components/single-option-chart-table/single-option-chart-table.component';
 import { VotesTableComponent } from './components/votes-table/votes-table.component';
 import { VotingPrivacyDialogModule } from './modules/voting-privacy-dialog';
@@ -46,6 +47,7 @@ const COMPONENTS = [
     imports: [
         CommonModule,
         ChartComponent,
+        PollRankBallotComponent,
         MatProgressBarModule,
         MatFormFieldModule,
         MatSelectModule,
@@ -66,7 +68,7 @@ const COMPONENTS = [
         ...PIPES,
         OpenSlidesTranslationModule.forChild()
     ],
-    exports: [...PIPES, ...MODULES, ...COMPONENTS, ChartComponent],
+    exports: [...PIPES, ...MODULES, ...COMPONENTS, ChartComponent, PollRankBallotComponent],
     providers: [...PIPES]
 })
 export class PollModule {}

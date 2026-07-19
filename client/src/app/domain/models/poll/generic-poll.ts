@@ -6,6 +6,7 @@ import { ViewPollCandidateList } from 'src/app/site/pages/meetings/pages/polls/v
 import { ViewUser } from 'src/app/site/pages/meetings/view-models/view-user';
 
 import { EntitledUsersEntry, PollClassType, PollMethod, PollPercentBase, PollState, PollType } from './poll-constants';
+import { PollRankResult } from './rank-result';
 
 export type PollContentObject = ViewAssignment | ViewMotion | ViewTopic;
 
@@ -30,6 +31,7 @@ export interface PollData {
     global_yes?: boolean;
     global_no?: boolean;
     global_abstain?: boolean;
+    rank_result?: PollRankResult | null;
     content_object?: PollContentObject;
     getContentObjectTitle: () => string | null;
 }
@@ -42,6 +44,7 @@ export interface OptionTitle {
 }
 
 export interface OptionData {
+    id?: number;
     getOptionTitle: () => OptionTitle;
     yes?: number;
     no?: number;

@@ -10,9 +10,12 @@ import {
     PollBackendDurationType,
     PollMethod,
     PollPercentBase,
+    PollRankAlgorithm,
+    PollRankQuota,
     PollState,
     PollType
 } from './poll-constants';
+import { PollRankResult } from './rank-result';
 
 export class Poll extends BaseDecimalModel<Poll> {
     public static readonly COLLECTION = `poll`;
@@ -54,6 +57,25 @@ export class Poll extends BaseDecimalModel<Poll> {
     public global_abstain!: boolean;
     public entitled_users_at_stop!: EntitledUsersEntry[];
     public is_pseudoanonymized!: boolean;
+
+    /**
+     * The counting algorithm for polls with pollmethod `rank`.
+     * Null/undefined means `meek-nz`. Unset for all other polls.
+     */
+    public rank_algorithm!: PollRankAlgorithm | null;
+
+    /**
+     * The quota rule for the STV counting algorithms of polls with pollmethod
+     * `rank`. Null/undefined means `droop`; ignored for the Borda count.
+     * Unset for all other polls.
+     */
+    public rank_quota!: PollRankQuota | null;
+
+    /**
+     * The STV counting result, written by the backend when a poll with
+     * pollmethod `rank` is stopped. Null/undefined for all other polls.
+     */
+    public rank_result!: PollRankResult | null;
 
     public get isCreated(): boolean {
         return this.state === PollState.Created;
@@ -131,6 +153,10 @@ export class Poll extends BaseDecimalModel<Poll> {
         return this.pollmethod === PollMethod.YNA;
     }
 
+    public get isMethodRank(): boolean {
+        return this.pollmethod === PollMethod.Rank;
+    }
+
     public get hasGlobalOptionEnabled(): boolean {
         return this.global_yes || this.global_no || this.global_abstain;
     }
@@ -170,6 +196,9 @@ export class Poll extends BaseDecimalModel<Poll> {
         `votesinvalid`,
         `votescast`,
         `entitled_users_at_stop`,
+        `rank_algorithm`,
+        `rank_quota`,
+        `rank_result`,
         `live_voting_enabled`,
         `live_votes`,
         `sequential_number`,
