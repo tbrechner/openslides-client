@@ -108,28 +108,15 @@ export abstract class BasePollFormComponent extends BaseComponent implements OnI
                 {}
             );
         }
-        if (!this.isEVotingSelected) {
-            // Ranked voting is only available for electronic voting
-            methods = Object.keys(methods).reduce(
-                (obj, key) => (key === FormPollMethod.RANK ? obj : { ...obj, [key]: methods[key] }),
-                {}
-            );
-        }
         return methods;
     }
 
     /**
      * The poll types which can be selected with the current poll method.
-     * Rank polls can never be analog.
+     * Rank polls support all types incl. analog (paper ballot entry).
      */
     public get filteredPollTypes(): Record<string, string> {
-        if (!this.isRankMethod) {
-            return this.pollTypes;
-        }
-        return Object.entries(this.pollTypes).reduce(
-            (obj, [key, value]) => (key === PollType.Analog ? obj : { ...obj, [key]: value }),
-            {}
-        );
+        return this.pollTypes;
     }
 
     public sortFn = (groupA: ViewGroup, groupB: ViewGroup): number => groupA.weight - groupB.weight;

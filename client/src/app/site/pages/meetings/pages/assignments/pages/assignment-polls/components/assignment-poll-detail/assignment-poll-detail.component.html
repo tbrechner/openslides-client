@@ -52,9 +52,10 @@
                             </div>
                         </div>
                     }
-                    @if (showResults && poll.stateHasVotes && poll.isEVoting) {
+                    @if (showResults && poll.stateHasVotes && (poll.isEVoting || poll.isMethodRank)) {
                         <mat-tab-group (selectedTabChange)="onTabChange()">
-                            <mat-tab label="{{ 'Single votes' | translate }}">
+                            <!-- Analog rank polls list the transcribed paper ballots for auditing -->
+                            <mat-tab label="{{ (poll.isEVoting ? 'Single votes' : 'Ballots') | translate }}">
                                 <!-- Single Votes Table -->
                                 <div class="named-result-table">
                                     @if (votesDataObservable) {
@@ -68,14 +69,16 @@
                                     }
                                 </div>
                             </mat-tab>
-                            <mat-tab label="{{ 'Entitled users' | translate }}">
-                                <os-entitled-users-table
-                                    [displayDelegation]="displayDelegation"
-                                    [displayVoteWeight]="displayVoteWeight"
-                                    [entitledUsersObservable]="entitledUsersObservable"
-                                    [isViewingThis]="isViewingEntitledUserslist"
-                                ></os-entitled-users-table>
-                            </mat-tab>
+                            @if (poll.isEVoting) {
+                                <mat-tab label="{{ 'Entitled users' | translate }}">
+                                    <os-entitled-users-table
+                                        [displayDelegation]="displayDelegation"
+                                        [displayVoteWeight]="displayVoteWeight"
+                                        [entitledUsersObservable]="entitledUsersObservable"
+                                        [isViewingThis]="isViewingEntitledUserslist"
+                                    ></os-entitled-users-table>
+                                </mat-tab>
+                            }
                         </mat-tab-group>
                     } @else if (poll.isEVoting && poll.isStarted) {
                         <mat-tab-group>

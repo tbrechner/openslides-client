@@ -4,6 +4,7 @@ import { Content, ContentColumns, ContentText } from 'pdfmake/interfaces';
 import { AssignmentPhase } from 'src/app/domain/models/assignments/assignment-phase';
 import { PollMethod, PollTableData, VotingResult } from 'src/app/domain/models/poll/poll-constants';
 import { HtmlToPdfService } from 'src/app/gateways/export/html-to-pdf.service';
+import { PollRankResultPdfService } from 'src/app/site/pages/meetings/modules/poll/services/poll-rank-result-pdf.service';
 import { ViewPoll } from 'src/app/site/pages/meetings/pages/polls';
 
 import { AssignmentPollService, UnknownUserLabel } from '../modules/assignment-poll/services/assignment-poll.service';
@@ -17,7 +18,8 @@ export class AssignmentPdfService {
     public constructor(
         private translate: TranslateService,
         private htmlToPdfService: HtmlToPdfService,
-        private assignmentPollService: AssignmentPollService
+        private assignmentPollService: AssignmentPollService,
+        private rankResultPdfService: PollRankResultPdfService
     ) {}
 
     /**
@@ -158,6 +160,14 @@ export class AssignmentPdfService {
                     margin: [0, 15, 0, 0]
                 });
 
+                // For rank (STV) polls the counted result replaces the generic
+                // table, which would only show first-preference totals. If
+                // counting failed, those totals are shown below the error.
+                resultBody.push(...this.rankResultPdfService.createResultContent(poll));
+                if (this.rankResultPdfService.suppressGenericResults(poll)) {
+                    continue;
+                }
+
                 pollTableBody.push([
                     {
                         text: ``,
@@ -250,7 +260,7 @@ export class AssignmentPdfService {
     private getPollResult(votingResult: PollTableData, poll: ViewPoll): string {
         const resultList = votingResult.value
             .filter((singleResult: VotingResult) => {
-                if (poll.pollmethod === PollMethod.Y) {
+                if (poll.pollmethod === PollMethod.Y || poll.pollmethod === PollMethod.Rank) {
                     return singleResult.vote !== `no` && singleResult.vote !== `abstain`;
                 } else if (poll.pollmethod === PollMethod.YN) {
                     return singleResult.vote !== `abstain`;

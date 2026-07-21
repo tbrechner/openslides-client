@@ -16,6 +16,7 @@ import { ViewAssignment } from '../../../pages/assignments';
 import { ViewUser } from '../../../view-models/view-user';
 import { EntitledUsersTableEntry } from '../definitions';
 import { PollService } from '../services/poll.service';
+import { PollRankResultPdfService } from '../services/poll-rank-result-pdf.service';
 import { BaseVoteData } from './base-poll-detail.component';
 
 /**
@@ -73,6 +74,7 @@ export abstract class BasePollPdfService {
     protected mediaManageService = inject(MediaManageService);
     protected pdfExport = inject(MeetingPdfExportService);
     protected translate = inject(TranslateService);
+    protected rankResultPdfService = inject(PollRankResultPdfService);
 
     public constructor(protected pollService: PollService) {
         this.meetingSettingsService.get(`name`).subscribe(name => (this.eventName = name));
@@ -371,14 +373,23 @@ export abstract class BasePollPdfService {
             pollResultPdfContent.push(resultsData);
         }
 
-        if (resultsTable) {
+        // For rank (STV) polls the counted result replaces the generic table,
+        // which would only show first-preference totals. If counting failed,
+        // those totals are shown below the error.
+        const rankResultContent =
+            poll.isFinished || poll.isPublished ? this.rankResultPdfService.createResultContent(poll) : [];
+
+        if (resultsTable || rankResultContent.length) {
             pollResultPdfContent.push({
                 text: this.translate.instant(`Result`),
                 margin: [0, poll.isListPoll ? 20 : 0, 0, 5],
                 bold: true
             });
-            const resultsData = this.createResultsTable(poll, resultsTable);
-            pollResultPdfContent.push(resultsData);
+            pollResultPdfContent.push(...rankResultContent);
+            if (resultsTable && !this.rankResultPdfService.suppressGenericResults(poll)) {
+                const resultsData = this.createResultsTable(poll, resultsTable);
+                pollResultPdfContent.push(resultsData);
+            }
         }
 
         if (exportInfo.votesData?.length && poll.type !== PollType.Analog) {
@@ -478,9 +489,11 @@ export abstract class BasePollPdfService {
      * @returns the table as pdfmake object
      */
     private createResultsTable(poll: ViewPoll, resultsTableData: PollTableData[]): object {
+        // Rank polls carry only first-preference totals, stored as yes votes.
+        const methodVotes = poll.pollmethod === PollMethod.Rank ? PollMethod.Y : poll.pollmethod;
         const resultsTable = (JSON.parse(JSON.stringify(resultsTableData)) as PollTableData[]).map(date => {
             const forbidden = [`yes`, `no`, `abstain`].filter(
-                option => !poll.pollmethod.includes(option.charAt(0).toUpperCase())
+                option => !methodVotes.includes(option.charAt(0).toUpperCase())
             );
             date.value = date.value?.filter(val => !forbidden.includes(val.vote));
             return date;

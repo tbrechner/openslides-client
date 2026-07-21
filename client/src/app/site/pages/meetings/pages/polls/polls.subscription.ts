@@ -24,7 +24,13 @@ export const pollModelRequest: BaseSimplifiedModelRequest = {
                 }
             ]
         },
-        { idField: `global_option_id`, fieldset: FULL_FIELDSET },
+        {
+            // Rank (STV) polls store all ballots as votes on the global option;
+            // analog rank polls need them to prefill the ballot entry dialog.
+            idField: `global_option_id`,
+            fieldset: FULL_FIELDSET,
+            follow: [{ idField: `vote_ids`, fieldset: FULL_FIELDSET }]
+        },
         {
             idField: `option_ids`,
             fieldset: FULL_FIELDSET,

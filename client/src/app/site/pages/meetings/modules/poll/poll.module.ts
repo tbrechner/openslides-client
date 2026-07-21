@@ -24,6 +24,7 @@ import { PollCannotVoteMessageComponent } from './components/poll-cannot-vote-me
 import { PollFilteredVotesChartComponent } from './components/poll-filtered-votes-chart/poll-filtered-votes-chart.component';
 import { PollProgressComponent } from './components/poll-progress/poll-progress.component';
 import { PollRankBallotComponent } from './components/poll-rank-ballot/poll-rank-ballot.component';
+import { PollRankBallotEntryComponent } from './components/poll-rank-ballot-entry/poll-rank-ballot-entry.component';
 import { SingleOptionChartTableComponent } from './components/single-option-chart-table/single-option-chart-table.component';
 import { VotesTableComponent } from './components/votes-table/votes-table.component';
 import { VotingPrivacyDialogModule } from './modules/voting-privacy-dialog';
@@ -48,6 +49,7 @@ const COMPONENTS = [
         CommonModule,
         ChartComponent,
         PollRankBallotComponent,
+        PollRankBallotEntryComponent,
         MatProgressBarModule,
         MatFormFieldModule,
         MatSelectModule,
@@ -68,7 +70,7 @@ const COMPONENTS = [
         ...PIPES,
         OpenSlidesTranslationModule.forChild()
     ],
-    exports: [...PIPES, ...MODULES, ...COMPONENTS, ChartComponent, PollRankBallotComponent],
+    exports: [...PIPES, ...MODULES, ...COMPONENTS, ChartComponent, PollRankBallotComponent, PollRankBallotEntryComponent],
     providers: [...PIPES]
 })
 export class PollModule {}

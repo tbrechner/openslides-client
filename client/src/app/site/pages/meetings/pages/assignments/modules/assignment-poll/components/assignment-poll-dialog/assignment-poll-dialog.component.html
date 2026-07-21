@@ -12,40 +12,61 @@
 
     <!-- Analog voting -->
     @if (isAnalogPoll && dialogVoteForm && !reloading) {
+        <!-- Ranked (STV) paper ballots -->
+        @if (isRankPoll) {
+            <os-poll-rank-ballot-entry
+                [candidateNames]="rankCandidateNames"
+                [initialText]="rankBallotsInitialText"
+                (ballotsChange)="onRankBallotsChange()"
+            ></os-poll-rank-ballot-entry>
+        }
         <form [formGroup]="dialogVoteForm">
             <!-- Candidates Values -->
-            <div formGroupName="options">
-                @for (option of options; track option) {
-                    <div class="votes-grid">
-                        <div class="candidate">
-                            @if (option.content_object && option.content_object['getFullName']) {
-                                <span>
-                                    {{ option.content_object | toString: 'getFullName' }}
-                                </span>
-                            }
-                            @if (!option.content_object && !option.poll_candidate_user_ids) {
-                                <i>
-                                    {{ unknownUserLabel | translate }}
-                                </i>
-                            }
+            @if (!isRankPoll) {
+                <div formGroupName="options">
+                    @for (option of options; track option) {
+                        <div class="votes-grid">
+                            <div class="candidate">
+                                @if (option.content_object && option.content_object['getFullName']) {
+                                    <span>
+                                        {{ option.content_object | toString: 'getFullName' }}
+                                    </span>
+                                }
+                                @if (!option.content_object && !option.poll_candidate_user_ids) {
+                                    <i>
+                                        {{ unknownUserLabel | translate }}
+                                    </i>
+                                }
+                            </div>
+                            <div class="amount">
+                                @for (value of analogVoteFields; track value) {
+                                    <div [formGroupName]="calculateOptionKey(option)">
+                                        <os-check-input
+                                            inputType="number"
+                                            [checkboxLabel]="'majority' | translate"
+                                            [checkboxValue]="-1"
+                                            [formControlName]="value"
+                                            [placeholder]="voteValueVerbose[value] | translate"
+                                        ></os-check-input>
+                                    </div>
+                                }
+                            </div>
+                            <mat-divider></mat-divider>
                         </div>
-                        <div class="amount">
-                            @for (value of analogVoteFields; track value) {
-                                <div [formGroupName]="calculateOptionKey(option)">
-                                    <os-check-input
-                                        inputType="number"
-                                        [checkboxLabel]="'majority' | translate"
-                                        [checkboxValue]="-1"
-                                        [formControlName]="value"
-                                        [placeholder]="voteValueVerbose[value] | translate"
-                                    ></os-check-input>
-                                </div>
-                            }
-                        </div>
-                        <mat-divider></mat-divider>
+                    }
+                </div>
+            }
+            <!-- Abstain ballots for ranked polls -->
+            @if (isRankPoll && isGlobalAbstainEnabled) {
+                <div class="votes-grid">
+                    <div class="assignment-dialog-input--container">
+                        <mat-form-field class="amount">
+                            <mat-label>{{ 'Abstain ballots' | translate }}</mat-label>
+                            <input formControlName="amount_global_abstain" matInput min="0" type="number" />
+                        </mat-form-field>
                     </div>
-                }
-            </div>
+                </div>
+            }
             <!-- Sum Values -->
             @for (value of sumValues; track value) {
                 <div class="votes-grid">
@@ -58,6 +79,19 @@
                 </div>
             }
         </form>
+        @if (isRankPoll && rankBallotMismatch) {
+            <div class="rank-ballot-hint warning">
+                {{ 'The entered ballots and abstentions do not add up to the number of valid votes.' | translate }}
+            </div>
+        }
+        @if (isRankPoll && isCreatedOrNewPoll) {
+            <div class="rank-ballot-hint">
+                {{
+                    'Ballots are stored as a draft until the vote totals are entered. Entering the totals finishes the poll.'
+                        | translate
+                }}
+            </div>
+        }
         <!-- Publish Check -->
         <div class="spacer-top-20">
             <mat-checkbox [(ngModel)]="publishImmediately" (change)="publishStateChanged($event.checked)">

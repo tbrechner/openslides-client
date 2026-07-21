@@ -1,0 +1,52 @@
+<div class="rank-ballot-entry">
+    <div class="candidate-legend">
+        <div class="legend-title">{{ 'Candidates (as printed on the ballot)' | translate }}</div>
+        <ol>
+            @for (name of candidateNames; track $index) {
+                <li>{{ name }}</li>
+            }
+        </ol>
+    </div>
+
+    <div class="ballot-input">
+        <div class="ballot-input-header">
+            <span class="legend-title">{{ 'Ballots' | translate }}</span>
+            <button mat-stroked-button type="button" [matMenuTriggerFor]="importMenu">
+                <mat-icon>upload_file</mat-icon>
+                <span>{{ 'Import' | translate }}</span>
+            </button>
+            <mat-menu #importMenu="matMenu">
+                <button mat-menu-item type="button" (click)="startImport(fileInput, 'replace')">
+                    {{ 'Import file (replace ballots)' | translate }}
+                </button>
+                <button mat-menu-item type="button" (click)="startImport(fileInput, 'append')">
+                    {{ 'Import file (append ballots)' | translate }}
+                </button>
+            </mat-menu>
+            <input #fileInput accept=".blt,.csv,.txt" hidden type="file" (change)="onFileSelected(fileInput)" />
+        </div>
+        <textarea
+            class="ballot-textarea"
+            rows="10"
+            spellcheck="false"
+            [placeholder]="'One ballot per line: candidate numbers in order of preference, e.g. 3 1 4' | translate"
+            [(ngModel)]="text"
+            (ngModelChange)="onTextChange()"
+        ></textarea>
+        <div class="ballot-tally">
+            {{ ballotCount }}&nbsp;
+            <span>{{ 'ballots entered' | translate }}</span>
+        </div>
+        @for (error of errors; track $index) {
+            <div class="ballot-error">{{ 'Line' | translate }} {{ error.line }}: {{ error.message }}</div>
+        }
+        @if (importErrors.length) {
+            <div class="ballot-error">
+                {{ 'The file could not be imported:' | translate }}
+                @for (error of importErrors; track $index) {
+                    <div>{{ 'Line' | translate }} {{ error.line }}: {{ error.message }}</div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -67,6 +67,24 @@ export class AssignmentPollPdfService extends BasePollPdfService {
     }
 
     /**
+     * Rank (STV) ballots are taller than yes/no ballots: they carry the extra
+     * ranking instruction and a write-in box for every candidate. Fewer fit on
+     * a page, otherwise the last row overflows its cell.
+     */
+    protected override getRowsPerPage(poll: ViewPoll): number {
+        if (poll.pollmethod !== PollMethod.Rank) {
+            return super.getRowsPerPage(poll);
+        }
+        const optionCount = poll.options.length + (poll.global_abstain ? 1 : 0);
+        if (optionCount <= 2) {
+            return 3;
+        } else if (optionCount <= 5) {
+            return 2;
+        }
+        return 1;
+    }
+
+    /**
      * Creates one ballot in it's position on the page. Note that creating once
      * and then pasting the result several times does not work
      */

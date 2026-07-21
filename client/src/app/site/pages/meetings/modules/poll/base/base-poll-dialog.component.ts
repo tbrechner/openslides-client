@@ -77,6 +77,13 @@ export abstract class BasePollDialogComponent extends BaseUiComponent implements
         return this.pollForm.contentForm.get(`type`)!.value === PollType.Analog || false;
     }
 
+    public get isRankPoll(): boolean {
+        if (!this.pollForm) {
+            return false;
+        }
+        return this.pollForm.contentForm.get(`pollmethod`)!.value === FormPollMethod.RANK;
+    }
+
     @ViewChild(BasePollFormComponent, { static: true })
     protected pollForm: BasePollFormComponent | null = null;
 
@@ -136,9 +143,16 @@ export abstract class BasePollDialogComponent extends BaseUiComponent implements
         const voteForm = this.dialogVoteForm.value;
         const payload: any = { ...pollForm, ...voteForm, publish_immediately: this.publishImmediately };
         payload.options = this.getOptions(voteForm.options, payload.pollmethod === FormPollMethod.LIST_YNA);
+        this.enrichAnalogPayload(payload);
         this.formatPayload(payload);
         this.dialogRef.close(payload);
     }
+
+    /**
+     * Hook for subclasses to add data to the payload of an analog poll,
+     * e.g. the transcribed ballots of an analog rank poll.
+     */
+    protected enrichAnalogPayload(_payload: any): void {}
 
     private formatPayload(payload: any): void {
         // `rank` is the only pollmethod which is sent in lower case; `yna` (list) becomes `YNA`.
@@ -377,16 +391,18 @@ export abstract class BasePollDialogComponent extends BaseUiComponent implements
             amount_global_no: data.global_option?.no,
             amount_global_abstain: data.global_option?.abstain
         };
-        for (const option of data.options || []) {
-            const votes: any = {};
-            votes.Y = option.yes;
-            if (data.pollmethod !== PollMethod.Y) {
-                votes.N = option.no;
+        if (data.pollmethod !== PollMethod.Rank) {
+            for (const option of data.options || []) {
+                const votes: any = {};
+                votes.Y = option.yes;
+                if (data.pollmethod !== PollMethod.Y) {
+                    votes.N = option.no;
+                }
+                if (data.pollmethod.toUpperCase() === FormPollMethod.YNA) {
+                    votes.A = option.abstain;
+                }
+                update.options[option.fqid] = votes;
             }
-            if (data.pollmethod.toUpperCase() === FormPollMethod.YNA) {
-                votes.A = option.abstain;
-            }
-            update.options[option.fqid] = votes;
         }
 
         if (this.dialogVoteForm) {

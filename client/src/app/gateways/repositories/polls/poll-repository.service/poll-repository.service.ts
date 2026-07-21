@@ -87,7 +87,7 @@ export class PollRepositoryService extends BaseMeetingRelatedRepository<ViewPoll
     }
 
     private async createAnalogPoll(poll: any): Promise<Identifiable> {
-        const payload = {
+        const payload: any = {
             meeting_id: this.activeMeetingId,
             title: poll.title,
             onehundred_percent_base: poll.onehundred_percent_base,
@@ -106,6 +106,11 @@ export class PollRepositoryService extends BaseMeetingRelatedRepository<ViewPoll
             ...this.getAnalogPollVotesValues(poll),
             ...this.getAnalogPollGlobalValues(poll)
         };
+        if (poll.pollmethod === PollMethod.Rank) {
+            payload.rank_algorithm = poll.rank_algorithm;
+            payload.rank_quota = poll.rank_quota;
+            payload.rank_ballots = poll.rank_ballots ?? [];
+        }
         return this.sendActionToBackend(PollAction.CREATE, payload);
     }
 
@@ -151,6 +156,14 @@ export class PollRepositoryService extends BaseMeetingRelatedRepository<ViewPoll
             payload = this.getUpdateCreatedAnalogPollPayload(update, poll);
         } else {
             payload = this.updateOtherStateAnalogPoll(update, poll);
+        }
+        if (poll.isMethodRank) {
+            // ballots live on the poll (global option), not on the options
+            payload.rank_ballots = update.rank_ballots ?? [];
+            payload.amount_global_abstain = toDecimal(update.amount_global_abstain, false);
+            payload.rank_algorithm = update.rank_algorithm;
+            payload.rank_quota = update.rank_quota;
+            return this.sendActionToBackend(PollAction.UPDATE, payload);
         }
         const optionUpdatePayload = this.getAnalogOptions(option, true);
         return this.sendActionsToBackend([

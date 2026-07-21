@@ -1,0 +1,66 @@
+.rank-ballot-entry {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    .candidate-legend {
+        min-width: 180px;
+
+        ol {
+            margin: 8px 0 0;
+            padding-left: 24px;
+
+            li {
+                padding: 2px 0;
+            }
+        }
+    }
+
+    .ballot-input {
+        flex: 1;
+
+        .ballot-input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .ballot-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 8px;
+            resize: vertical;
+        }
+
+        .ballot-tally {
+            display: flex;
+            margin-top: 4px;
+            font-size: 12px;
+            opacity: 0.75;
+        }
+
+        .ballot-error {
+            color: var(--theme-warn, #cc3333);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    }
+
+    .legend-title {
+        font-weight: 500;
+    }
+}
+
+@media (max-width: 700px) {
+    .rank-ballot-entry {
+        flex-direction: column;
+
+        .ballot-input {
+            width: 100%;
+        }
+    }
+}
